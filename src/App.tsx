@@ -9,6 +9,9 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
+import SubmitPaperPage from "./pages/SubmitPaperPage";
+import AddVersionPage from "./pages/AddVersionPage";
+import PaperDetailsPage from "./pages/PaperDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +26,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<AdminPanel />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/submit-paper" element={<SubmitPaperPage />} />
+            <Route path="/add-version" element={<AddVersionPage />} />
+            <Route path="/paper/:paperId" element={<PaperDetailsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
