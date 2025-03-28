@@ -1,274 +1,151 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Library, Clock, Star, BarChart } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Navbar';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Search, 
+  BookOpen, 
+  Clock, 
+  FileText, 
+  Filter, 
+  UploadCloud 
+} from 'lucide-react';
+import DashboardLayout from '@/components/DashboardLayout';
+import PaperCard from '@/components/PaperCard';
+
+// Mock data for demonstration
+const MOCK_PAPERS = [
+  { 
+    id: 'p1', 
+    title: 'Blockchain Technology in Academic Publishing', 
+    author: 'John Doe', 
+    abstract: 'This paper explores the application of blockchain technology in academic publishing, focusing on its potential to revolutionize peer review, citation tracking, and intellectual property protection.',
+    status: 'Published', 
+    date: '2023-04-15',
+    ipfsHash: 'QmT7fzZ7X9z5'
+  },
+  { 
+    id: 'p2', 
+    title: 'Smart Contract Implementation for Research Validation', 
+    author: 'Jane Smith', 
+    abstract: 'An analysis of implementing smart contracts for automated validation of research findings and replication studies, with a focus on incentivizing reproducibility in scientific research.',
+    status: 'Pending', 
+    date: '2023-05-22',
+  },
+  { 
+    id: 'p3', 
+    title: 'Decentralized Storage Solutions for Scientific Data', 
+    author: 'Michael Johnson', 
+    abstract: 'Exploring the benefits and challenges of using decentralized storage networks for large scientific datasets, comparing IPFS, Filecoin, and traditional centralized storage solutions.',
+    status: 'Published', 
+    date: '2023-03-10',
+    ipfsHash: 'QmX9V5jR2Z1q'
+  },
+  { 
+    id: 'p4', 
+    title: 'Token Economics in Academic Incentive Systems', 
+    author: 'Sarah Williams', 
+    abstract: 'A theoretical framework for applying token economics to academic incentive systems, potentially creating more transparent and equitable rewards for contributions to knowledge.',
+    status: 'Rejected', 
+    date: '2023-06-05',
+  },
+];
 
 const Dashboard: React.FC = () => {
-  const { isAuthenticated, isAdmin, user } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
+  
+  // Filter papers based on search query and active tab
+  const filteredPapers = MOCK_PAPERS.filter(paper => {
+    const matchesSearch = paper.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          paper.author.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (activeTab === 'all') return matchesSearch;
+    if (activeTab === 'published') return matchesSearch && paper.status.toLowerCase() === 'published';
+    if (activeTab === 'pending') return matchesSearch && paper.status.toLowerCase() === 'pending';
+    
+    return matchesSearch;
+  });
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
+  const handleViewPaper = (ipfsHash: string) => {
+    // In a real app, redirect to paper view or open in IPFS gateway
+    window.open(`https://ipfs.io/ipfs/${ipfsHash}`, '_blank');
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <DashboardLayout>
+      <div className="mb-8">
+        <h1 className="cnki-heading text-2xl">Welcome, {user?.username}</h1>
+        <p className="text-gray-600">Browse and manage academic papers stored on the blockchain</p>
+      </div>
       
-      <main className="cnki-container py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          
-          {isAdmin && (
-            <Button 
-              onClick={() => navigate('/admin')}
-              className="flex items-center"
-            >
-              <BarChart className="h-4 w-4 mr-2" />
-              Admin Panel
-            </Button>
-          )}
+      <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <Input
+            placeholder="Search papers by title or author..."
+            className="pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <FileText className="h-5 w-5 mr-2 text-blue-500" />
-                My Documents
-              </CardTitle>
-              <CardDescription>Your submitted papers</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">8</div>
-              <div className="text-sm text-muted-foreground">
-                2 pending review
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <Clock className="h-5 w-5 mr-2 text-amber-500" />
-                Recent Activity
-              </CardTitle>
-              <CardDescription>Last 30 days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">12</div>
-              <div className="text-sm text-muted-foreground">
-                4 reviews, 8 downloads
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <Star className="h-5 w-5 mr-2 text-yellow-500" />
-                Citations
-              </CardTitle>
-              <CardDescription>Total citations received</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">37</div>
-              <div className="text-sm text-muted-foreground">
-                +5 from last month
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex space-x-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            <span>Filter</span>
+          </Button>
+          <Button className="flex items-center gap-2">
+            <UploadCloud className="h-4 w-4" />
+            <span>Submit Paper</span>
+          </Button>
         </div>
-        
-        <Tabs defaultValue="papers" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="papers">Recent Papers</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews</TabsTrigger>
-            <TabsTrigger value="activity">Recent Activity</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="papers" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Recent Papers</CardTitle>
-                <CardDescription>
-                  Papers you've submitted or collaborated on
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <table className="cnki-table">
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Citations</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="font-medium">Advances in Neural Networks</td>
-                      <td>2023-05-12</td>
-                      <td>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Published
-                        </span>
-                      </td>
-                      <td>23</td>
-                    </tr>
-                    <tr>
-                      <td className="font-medium">Blockchain Security Analysis</td>
-                      <td>2023-08-21</td>
-                      <td>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          Under Review
-                        </span>
-                      </td>
-                      <td>0</td>
-                    </tr>
-                    <tr>
-                      <td className="font-medium">Quantum Computing Applications</td>
-                      <td>2023-11-03</td>
-                      <td>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          Accepted
-                        </span>
-                      </td>
-                      <td>5</td>
-                    </tr>
-                    <tr>
-                      <td className="font-medium">Smart Contract Vulnerabilities</td>
-                      <td>2024-01-15</td>
-                      <td>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          Peer Review
-                        </span>
-                      </td>
-                      <td>0</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="reviews" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Review Assignments</CardTitle>
-                <CardDescription>
-                  Papers assigned to you for review
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">
-                        Modern Applications of Distributed Systems
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        Due: Apr 15, 2024
-                      </span>
-                    </div>
-                    <Progress value={75} className="h-2" />
-                    <span className="text-xs text-muted-foreground">75% completed</span>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">
-                        Ethical Implications of AI in Healthcare
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        Due: Apr 22, 2024
-                      </span>
-                    </div>
-                    <Progress value={30} className="h-2" />
-                    <span className="text-xs text-muted-foreground">30% completed</span>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium">
-                        Cryptographic Methods for Blockchain
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        Due: May 5, 2024
-                      </span>
-                    </div>
-                    <Progress value={0} className="h-2" />
-                    <span className="text-xs text-muted-foreground">Not started</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="activity" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Your recent interactions with the system
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex">
-                    <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                      <FileText className="h-5 w-5 text-blue-700" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Submitted peer review</p>
-                      <p className="text-sm text-muted-foreground">
-                        You submitted a review for "Neural Network Optimization"
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">2 days ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex">
-                    <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                      <Library className="h-5 w-5 text-green-700" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Paper published</p>
-                      <p className="text-sm text-muted-foreground">
-                        Your paper "Advances in Neural Networks" was published
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">1 week ago</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex">
-                    <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
-                      <Star className="h-5 w-5 text-yellow-700" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">New citation</p>
-                      <p className="text-sm text-muted-foreground">
-                        Your paper received 3 new citations
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">2 weeks ago</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+      </div>
+      
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList>
+          <TabsTrigger value="all" className="flex items-center gap-1">
+            <BookOpen className="h-4 w-4" />
+            <span>All Papers</span>
+          </TabsTrigger>
+          <TabsTrigger value="published" className="flex items-center gap-1">
+            <FileText className="h-4 w-4" />
+            <span>Published</span>
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span>Pending</span>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredPapers.length > 0 ? (
+          filteredPapers.map(paper => (
+            <PaperCard
+              key={paper.id}
+              id={paper.id}
+              title={paper.title}
+              author={paper.author}
+              abstract={paper.abstract}
+              status={paper.status}
+              date={paper.date}
+              ipfsHash={paper.ipfsHash}
+              onView={() => paper.ipfsHash && handleViewPaper(paper.ipfsHash)}
+            />
+          ))
+        ) : (
+          <div className="col-span-full py-10 text-center text-gray-500">
+            <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+            <h3 className="text-lg font-medium">No papers found</h3>
+            <p>Try adjusting your search or filter criteria</p>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 };
 

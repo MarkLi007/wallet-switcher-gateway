@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Book, LogOut, User, Shield } from 'lucide-react';
-import WalletButton from './WalletButton';
+import EnhancedWalletButton from './EnhancedWalletButton';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, isAdmin, logout, user } = useAuth();
@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <WalletButton />
+            <EnhancedWalletButton />
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-2">
