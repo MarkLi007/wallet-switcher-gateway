@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 215 66% 37%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -61,8 +55,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 215 66% 37%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -97,5 +91,60 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
   }
+}
+
+/* CNKI-inspired styles */
+.cnki-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.cnki-card {
+  @apply bg-white rounded-md border border-gray-200 shadow-sm hover:shadow-md transition-shadow;
+}
+
+.cnki-heading {
+  @apply text-xl font-semibold text-gray-800 mb-4;
+}
+
+.cnki-table {
+  @apply w-full border-collapse;
+}
+
+.cnki-table th {
+  @apply bg-gray-50 text-left text-sm font-medium text-gray-600 px-4 py-3 border-b;
+}
+
+.cnki-table td {
+  @apply px-4 py-3 border-b border-gray-200 text-sm text-gray-700;
+}
+
+.cnki-table tr:hover {
+  @apply bg-gray-50;
+}
+
+.wallet-btn {
+  @apply relative inline-flex items-center justify-center px-4 py-2 overflow-hidden font-medium transition-all bg-primary rounded-md hover:bg-blue-600 text-white;
+}
+
+.wallet-btn .wallet-icon {
+  @apply mr-2 transition-transform;
+}
+
+.wallet-btn:hover .wallet-icon {
+  @apply rotate-12;
+}
+
+.wallet-btn:active {
+  @apply scale-95;
+}
+
+.wallet-btn::after {
+  content: '';
+  @apply absolute top-0 left-0 w-full h-full bg-white opacity-0 pointer-events-none transition-opacity;
+}
+
+.wallet-btn:active::after {
+  @apply opacity-20;
 }
