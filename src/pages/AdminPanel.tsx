@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 
-// Mock data for demonstration
 const MOCK_PAPERS = [
   { 
     id: 'p1', 
@@ -150,7 +149,6 @@ const AdminPanel: React.FC = () => {
   const [papers, setPapers] = useState(MOCK_PAPERS);
   const [users, setUsers] = useState(MOCK_USERS);
 
-  // Redirect if not authenticated or not admin
   useEffect(() => {
     if (!isAuthenticated || !isAdmin) {
       navigate('/dashboard');
