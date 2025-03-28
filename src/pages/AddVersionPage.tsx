@@ -1,21 +1,55 @@
+import React, { useState } from "react";
+import { Input } from "@components/ui/input";
+import { Button } from "@components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useContext, createContext, createFileHash, uploadToIPFS } from "services/contractService";
 
-import React from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
-import AddVersionForm from '@/components/AddVersionForm'; // The import path stays the same, only the extension changed
+const AddVersionForm: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [signature, setSignature] = useState<string | null>(null);
+  const [refereces, setReferences] = useState<string | null>("");
 
-const AddVersionPage: React.FC = () => {
+  useEffect(() => {
+    const getFileHash = () => {
+      if (file) {
+        const hash = createFileHash(file);
+        setSignature(hash);
+      }
+    };
+    getFileHash();
+  }, [file]);
+
+  const handleAddVersion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+    const fileData = await uploadToIPFS(file);
+    setReferences(fileData);
+  };
+
   return (
-    <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="cnki-heading text-2xl">Add New Version</h1>
-        <p className="text-gray-600">Add a new version to an existing paper with references</p>
-      </div>
-
-      <div className="max-w-3xl mx-auto">
-        <AddVersionForm />
-      </div>
-    </DashboardLayout>
+    <Card>
+      <CardHeader>
+        <CardTitle>Add New Version</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleAddVersion}>
+          <Input 
+            type="file" 
+            accept="application/json" 
+            onChange={(e) => setFile(e.target.files?.[0] || null)} 
+          />
+          <Button 
+            type="submit" 
+            disabled={!file}
+          >
+            Add New Version
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 
-export default AddVersionPage;
+export default AddVersionForm;
