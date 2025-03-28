@@ -1,30 +1,30 @@
 
-import React, { useState, useEffect } from "react";
-import { getCurrentAccount } from "@/services/contractService";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { MessageCircle, Send } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { MessageCircle, Send } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
+import { getCurrentAccount } from '../services/contractService';
 
 interface Comment {
-  id: string;
-  paperId: string;
+  commentId: string | number;
   userAddr: string;
   content: string;
   createdAt: number;
+  replies?: Comment[];
 }
 
-interface CommentSectionProps {
+interface CommentProps {
   paperId: string;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
+const CommentSection: React.FC<CommentProps> = ({ paperId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [userAddress, setUserAddress] = useState("");
+  const [userAddress, setUserAddress] = useState('');
 
   // Load user address
   useEffect(() => {
@@ -52,7 +52,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
     
     setLoading(true);
     try {
-      // Update API endpoint as needed
       const resp = await fetch(`http://localhost:3002/api/comments?paperId=${paperId}`);
       if (!resp.ok) {
         const data = await resp.json();
@@ -60,7 +59,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
       }
       
       const data = await resp.json();
-      setComments(data);
+      // Transform data for nested comments structure
+      const transformedData = data.map((comment: any) => ({
+        commentId: comment.id,
+        userAddr: comment.userAddr,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        replies: [] // Empty replies for now
+      }));
+      
+      setComments(transformedData);
     } catch (err) {
       toast.error("Error loading comments: " + (err as Error).message);
       setComments([]);
@@ -78,7 +86,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
     
     setSubmitting(true);
     try {
-      // Update API endpoint as needed
       const resp = await fetch("http://localhost:3002/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,33 +112,51 @@ const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
     }
   }
 
+  // This is a simplified Comment component since we don't have access to the actual Comment component
+  const CommentItem: React.FC<{comment: Comment}> = ({ comment }) => {
+    return (
+      <div className="p-4 border rounded-md mb-3 bg-white">
+        <div className="flex justify-between items-start">
+          <div className="font-medium text-sm text-primary">
+            {comment.userAddr.substring(0, 6)}...{comment.userAddr.substring(comment.userAddr.length - 4)}
+          </div>
+          <div className="text-xs text-gray-500">
+            {new Date(comment.createdAt * 1000).toLocaleString()}
+          </div>
+        </div>
+        <div className="mt-2 text-gray-700">{comment.content}</div>
+        <div className="flex gap-2 mt-2">
+          <button className="text-xs text-gray-500 hover:text-primary">Reply</button>
+          <button className="text-xs text-gray-500 hover:text-primary">Like</button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="border-b">
+        <CardTitle className="flex items-center gap-2 text-primary">
           <MessageCircle className="h-5 w-5" />
           Comments
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         <form onSubmit={handleSubmit} className="mb-6">
           <Textarea
             placeholder="Write your comment..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={3}
-            className="w-full mb-2"
+            className="w-full mb-2 cnki-textarea"
           />
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full cnki-button"
             disabled={submitting || !userAddress}
           >
             {submitting ? (
-              <>
-                <Send className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
+              "Submitting..."
             ) : (
               <>
                 <Send className="mr-2 h-4 w-4" />
@@ -156,17 +181,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ paperId }) => {
               </div>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="border-b pb-3">
-                  <p className="mb-2">{comment.content}</p>
-                  <div className="text-sm text-gray-500 flex justify-between">
-                    <span className="font-medium">
-                      {comment.userAddr.slice(0, 6)}...{comment.userAddr.slice(-4)}
-                    </span>
-                    <span>
-                      {new Date(comment.createdAt * 1000).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+                <CommentItem key={comment.commentId} comment={comment} />
               ))
             )}
           </div>
