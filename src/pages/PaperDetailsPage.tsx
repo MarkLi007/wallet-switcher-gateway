@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -30,6 +29,7 @@ import {
 } from 'lucide-react';
 
 import { getContract, checkRoles, PaperStatus } from '@/services/contractService';
+import { getCurrentAccount } from '@/services/contractService';
 
 interface PaperInfo {
   owner: string;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Wallet, Check, Loader2, RefreshCw } from "lucide-react";
+import { Wallet, Check, Loader2 } from "lucide-react";
 import { BrowserProvider } from "ethers";
 
 const WalletConnect: React.FC = () => {

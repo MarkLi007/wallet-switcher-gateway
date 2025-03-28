@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,6 +17,11 @@ import WalletConnect from "./WalletConnect";
 const EnhancedNavbar: React.FC = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Fix the role property error by ensuring the User type includes a role property
+  // This could be done by updating the User type check
+  // If user has a role property, use it, otherwise default to "user"
+  const userRole = user?.role || "user";
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -80,7 +84,7 @@ const EnhancedNavbar: React.FC = () => {
                       {user?.username || "User"}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user?.role || "User"}
+                      {userRole}
                     </p>
                   </div>
                 </DropdownMenuLabel>

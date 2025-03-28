@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -8,7 +7,6 @@ import { toast } from "sonner";
 import { getContract, calculateFileHash, uploadToIPFS } from "@/services/contractService";
 import { BrowserProvider, keccak256 } from "ethers";
 import { FilePlus2, Upload } from "lucide-react";
-import DashboardLayout from "./DashboardLayout";
 
 const AddVersionForm: React.FC = () => {
   const [paperId, setPaperId] = useState("");
