@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Send } from 'lucide-react';
 import Comment from './Comment';
 import { getCurrentAccount } from '../services/contractService';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -41,7 +41,6 @@ const CommentSection = ({ paperId }) => {
     
     setLoading(true);
     try {
-      // Update API endpoint as needed
       const resp = await fetch(`http://localhost:3002/api/comments?paperId=${paperId}`);
       if (!resp.ok) {
         const data = await resp.json();
@@ -49,12 +48,11 @@ const CommentSection = ({ paperId }) => {
       }
       
       const data = await resp.json();
-      // Transform data for nested comments structure
       const transformedData = data.map(comment => ({
         commentId: comment.id,
         userAddr: comment.userAddr,
         content: comment.content,
-        replies: [], // Empty replies for now
+        replies: [], 
         createdAt: comment.createdAt
       }));
       
@@ -93,7 +91,6 @@ const CommentSection = ({ paperId }) => {
       
       toast.success("Comment submitted successfully");
       setContent("");
-      // Reload comments
       loadComments();
     } catch (err) {
       toast.error("Error: " + err.message);
@@ -105,20 +102,15 @@ const CommentSection = ({ paperId }) => {
   const handleReply = (commentId, replyContent) => {
     if (!replyContent.trim()) return;
     
-    // Logic to submit a reply
     toast.info(`Replying to comment: ${commentId}`);
-    // Here you would call your API to save the reply
-    // After successful API call, reload the comments
   };
 
   const handleLike = (commentId) => {
     toast.success(`Liked comment: ${commentId}`);
-    // Logic for liking a comment
   };
 
   const handleReport = (commentId) => {
     toast.info(`Reported comment: ${commentId}`);
-    // Logic for reporting a comment
   };
 
   return (
@@ -145,12 +137,13 @@ const CommentSection = ({ paperId }) => {
           >
             {submitting ? (
               <>
-                <span className="mr-2">Submitting...</span>
+                <Send className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
               </>
             ) : (
               <>
-                <MessageCircle className="mr-2 h-4 w-4" />
-                <span>Submit Comment</span>
+                <Send className="mr-2 h-4 w-4" />
+                Submit Comment
               </>
             )}
           </Button>
