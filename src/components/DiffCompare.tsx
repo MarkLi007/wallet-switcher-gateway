@@ -8,18 +8,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { FileDiff, Diff } from "lucide-react";
 
-interface DiffCompareProps {
-  paperId: string;
-  versionCount: number;
-}
-
 interface DiffChunk {
   added?: boolean;
   removed?: boolean;
   value: string;
 }
 
-const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
+const DiffCompare: React.FC<{ paperId: string; versionCount: number }> = ({ 
+  paperId,
+  versionCount 
+}) => {
   const [versionIndex, setVersionIndex] = useState("");
   const [text, setText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,17 +89,17 @@ const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="border-b">
-        <CardTitle className="flex items-center gap-2 text-primary">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
           <FileDiff className="h-5 w-5" />
           Version Difference Comparison
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 pt-4">
-        <div className="border rounded-md p-4 space-y-4 bg-white shadow-sm">
-          <h3 className="text-lg font-medium text-gray-800">Submit Text for a Version</h3>
+      <CardContent className="space-y-6">
+        <div className="border rounded-md p-4 space-y-4">
+          <h3 className="text-lg font-medium">Submit Text for a Version</h3>
           <form onSubmit={handleSubmitVersion} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="versionIndex">Version Index:</Label>
                 <Input
@@ -110,7 +108,6 @@ const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
                   onChange={(e) => setVersionIndex(e.target.value)}
                   placeholder="E.g., 0, 1, 2..."
                   required
-                  className="cnki-input"
                 />
               </div>
             </div>
@@ -123,34 +120,22 @@ const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
                 rows={4}
                 placeholder="Enter the text content for this version"
                 required
-                className="cnki-textarea"
               />
             </div>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="cnki-button"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="loader mr-2"></span>
-                  Submitting...
-                </>
-              ) : (
-                "Submit Version Text"
-              )}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Version Text"}
             </Button>
           </form>
         </div>
 
-        <div className="border rounded-md p-4 space-y-4 bg-white shadow-sm">
-          <h3 className="text-lg font-medium text-gray-800">Compare Two Versions</h3>
+        <div className="border rounded-md p-4 space-y-4">
+          <h3 className="text-lg font-medium">Compare Two Versions</h3>
           <form onSubmit={handleDiff} className="space-y-4">
             <p className="text-sm text-gray-500">
-              Select two version indexes (0 to {versionCount > 0 ? versionCount - 1 : 0}) to compare
+              Select two version indexes (0 to {versionCount - 1}) to compare
             </p>
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-              <div className="space-y-2 w-full md:flex-1">
+            <div className="flex items-center gap-4">
+              <div className="space-y-2 flex-1">
                 <Label htmlFor="versionA">Version A:</Label>
                 <Input
                   id="versionA"
@@ -158,10 +143,9 @@ const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
                   onChange={(e) => setVerA(e.target.value)}
                   placeholder="E.g., 0"
                   required
-                  className="cnki-input"
                 />
               </div>
-              <div className="space-y-2 w-full md:flex-1">
+              <div className="space-y-2 flex-1">
                 <Label htmlFor="versionB">Version B:</Label>
                 <Input
                   id="versionB"
@@ -169,12 +153,11 @@ const DiffCompare: React.FC<DiffCompareProps> = ({ paperId, versionCount }) => {
                   onChange={(e) => setVerB(e.target.value)}
                   placeholder="E.g., 1"
                   required
-                  className="cnki-input"
                 />
               </div>
               <Button 
                 type="submit" 
-                className="mt-0 md:mt-6 w-full md:w-auto cnki-button"
+                className="mt-6"
                 disabled={isComparing}
               >
                 {isComparing ? (
