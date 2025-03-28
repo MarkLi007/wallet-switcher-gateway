@@ -6,6 +6,7 @@ interface User {
   id: string;
   username: string;
   isAdmin: boolean;
+  role: string; // Add the role property
 }
 
 interface AuthContextType {
@@ -32,8 +33,8 @@ interface AuthProviderProps {
 
 // Mock user database for demonstration
 const MOCK_USERS = [
-  { id: '1', username: 'admin', password: 'admin123', isAdmin: true },
-  { id: '2', username: 'user', password: 'user123', isAdmin: false },
+  { id: '1', username: 'admin', password: 'admin123', isAdmin: true, role: 'admin' },
+  { id: '2', username: 'user', password: 'user123', isAdmin: false, role: 'user' },
 ];
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
