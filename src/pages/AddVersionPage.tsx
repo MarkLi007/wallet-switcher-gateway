@@ -1,7 +1,7 @@
 
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import AddVersionForm from '@/components/AddVersionForm'; // The import path stays the same, only the extension changed
+import AddVersionForm from '@/components/AddVersionForm';
 
 const AddVersionPage: React.FC = () => {
   return (
