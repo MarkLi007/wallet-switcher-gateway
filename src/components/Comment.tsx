@@ -1,7 +1,24 @@
 
 import React, { useState } from 'react';
 
-const Comment = ({ commentId, userAddr, content, replies, onReply, onLike, onReport }) => {
+interface ReplyType {
+  commentId: string | number;
+  userAddr: string;
+  content: string;
+  replies?: ReplyType[];
+}
+
+interface CommentProps {
+  commentId: string | number;
+  userAddr: string;
+  content: string;
+  replies?: ReplyType[];
+  onReply: (commentId: string | number, content: string) => void;
+  onLike: (commentId: string | number) => void;
+  onReport: (commentId: string | number) => void;
+}
+
+const Comment: React.FC<CommentProps> = ({ commentId, userAddr, content, replies, onReply, onLike, onReport }) => {
   const [replyContent, setReplyContent] = useState('');
 
   const handleReply = () => {
